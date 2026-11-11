@@ -124,7 +124,7 @@ void aec_record_write(struct aec *aec, unsigned track,
 	if (!pcm)
 		return;
 
-	auconv_to_s16(pcm, AUFMT_FLOAT, samples, sample_count);
+	auconv_to_s16(pcm, AUFMT_FLOAT, (void *)samples, sample_count);
 	written = fwrite(pcm, sizeof(*pcm), sample_count, aec->record[track]);
 	aec->record_data_bytes[track] += (uint32_t)(written * sizeof(*pcm));
 	free(pcm);
