@@ -84,6 +84,7 @@ static int encode_float(struct aec_enc *enc, float *sampv, size_t sampc)
 		return EINVAL;
 
 	mtx_lock(&aec->mutex);
+	aec_record_write(aec, AEC_RECORD_TX_PRE, sampv, sampc);
 
 	for (i = 0; i < sampc; i += aec->blocksize) {
 
@@ -104,6 +105,8 @@ static int encode_float(struct aec_enc *enc, float *sampv, size_t sampc)
 			goto out;
 		}
 	}
+
+	aec_record_write(aec, AEC_RECORD_TX_POST, sampv, sampc);
 
  out:
 	mtx_unlock(&aec->mutex);

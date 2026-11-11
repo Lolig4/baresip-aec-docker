@@ -35,6 +35,8 @@ using namespace webrtc;
 
 static bool webrtc_aec_extended_filter;
 static uint32_t stream_delay_ms;
+static bool record_enabled;
+static char record_dir[512] = "/root/.baresip/aec-recordings";
 uint32_t webrtc_aec_stream_delay_ms(void) { return stream_delay_ms; }
 static webrtc::EchoCanceller3Config aec3_config;
 static webrtc::AudioProcessing::Config apm_config;
@@ -192,6 +194,7 @@ static void aec_destructor(void *arg)
 {
 	struct aec *st = (struct aec *)arg;
 
+	aec_record_close(st);
 	if (st->inst)
 		delete st->inst;
 
@@ -240,6 +243,8 @@ int webrtc_aec_alloc(struct aec **stp, void **ctx, struct aufilt_prm *prm)
 		goto out;
 	}
 
+	aec_record_open(aec, record_enabled, record_dir);
+
 	// NOTE: excluding channel count
 	aec->blocksize  = prm->srate * BLOCKSIZE / 1000;
 
@@ -287,6 +292,8 @@ static int module_init(void)
 	apm_config.echo_canceller.enabled = true;
 	apm_config.echo_canceller.mobile_mode = false;
 	conf_get_u32(conf, "webrtc_aec_stream_delay_ms", &stream_delay_ms);
+	(void)conf_get_bool(conf, "webrtc_aec_record", &record_enabled);
+	(void)conf_get_str(conf, "webrtc_aec_record_dir", record_dir, sizeof(record_dir));
 	get_i32(conf, "webrtc_apm_max_internal_processing_rate", &apm_config.pipeline.maximum_internal_processing_rate);
 	get_bool(conf, "webrtc_apm_multi_channel_render", &apm_config.pipeline.multi_channel_render);
 	get_bool(conf, "webrtc_apm_multi_channel_capture", &apm_config.pipeline.multi_channel_capture);

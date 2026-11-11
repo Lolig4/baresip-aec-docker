@@ -58,3 +58,16 @@ The exposed groups and member paths follow `EchoCanceller3Config`: `buffering`,
 `echo_removal_control`, `echo_model`, `comfort_noise`, and `suppressor`.
 Values are validated by WebRTC; invalid/out-of-range values are clamped by its
 `Validate()` function.
+
+## Audio recordings
+
+Set `webrtc_aec_record yes` to save the next calls as three 16-bit PCM WAVs in
+`webrtc_aec_record_dir` (default `/root/.baresip/aec-recordings`):
+
+- `*-rx-render.wav`: decoded remote audio supplied to AEC3 as its render reference
+- `*-tx-pre-aec.wav`: local microphone audio before AEC3
+- `*-tx-post-aec.wav`: local microphone audio after AEC3, as sent toward the encoder
+
+In the Unraid container, `/root/.baresip` maps to `/mnt/user/appdata/baresip`,
+so the files appear under `/mnt/user/appdata/baresip/aec-recordings`. Set
+`webrtc_aec_record no` after the test calls to stop recording.

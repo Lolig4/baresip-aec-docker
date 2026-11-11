@@ -81,6 +81,7 @@ static int decode_float(struct aec_dec *dec, float *sampv, size_t sampc)
 		return EINVAL;
 
 	mtx_lock(&aec->mutex);
+	aec_record_write(aec, AEC_RECORD_RX_RENDER, sampv, sampc);
 
 	for (i = 0; i < sampc; i += aec->blocksize) {
 
