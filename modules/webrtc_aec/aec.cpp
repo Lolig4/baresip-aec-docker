@@ -53,7 +53,7 @@ public:
 static void get_bool(struct conf *conf, const char *key, bool *value)
 { (void)conf_get_bool(conf, key, value); }
 static void get_float(struct conf *conf, const char *key, float *value)
-{ (void)conf_get_float(conf, key, value); }
+{ double v = *value; if (!conf_get_float(conf, key, &v)) *value = (float)v; }
 static void get_u32(struct conf *conf, const char *key, size_t *value)
 { uint32_t v = (uint32_t)*value; if (!conf_get_u32(conf, key, &v)) *value = v; }
 static void get_i32(struct conf *conf, const char *key, int *value)
