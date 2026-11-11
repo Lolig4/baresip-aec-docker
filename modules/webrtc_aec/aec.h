@@ -6,6 +6,8 @@
 
 #define WEBRTC_POSIX 1
 #include <modules/audio_processing/include/audio_processing.h>
+#include <modules/audio_processing/aec3/echo_canceller3.h>
+#include <api/audio/echo_canceller3_config.h>
 
 
 #define MAX_CHANNELS         1
@@ -41,5 +43,6 @@ int webrtc_aec_decode(struct aufilt_dec_st *st, struct auframe *af);
 
 
 /* Common */
+uint32_t webrtc_aec_stream_delay_ms(void);
 
 int  webrtc_aec_alloc(struct aec **stp, void **ctx, struct aufilt_prm *prm);

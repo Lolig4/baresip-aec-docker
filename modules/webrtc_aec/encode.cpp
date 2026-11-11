@@ -11,7 +11,6 @@
 #include "aec.h"
 
 
-#define SOUND_CARD_BUF 20
 
 
 struct aec_enc {
@@ -90,6 +89,10 @@ static int encode_float(struct aec_enc *enc, float *sampv, size_t sampc)
 
 		const float *src = &sampv[i];
 		float *dest = &sampv[i];
+
+		if (webrtc_aec_stream_delay_ms())
+			aec->inst->set_stream_delay_ms(
+				(int)webrtc_aec_stream_delay_ms());
 
 		r = aec->inst->ProcessStream(&src, config,
 					     config, &dest);
