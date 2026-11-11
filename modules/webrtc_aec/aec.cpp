@@ -48,8 +48,9 @@ int webrtc_aec_alloc(struct aec **stp, void **ctx, struct aufilt_prm *prm)
 {
 	struct aec *aec;
 	int err = 0;
-	Config config;
-	AudioProcessing::Config processing;
+	AudioProcessing::Config apm_config;
+	apm_config.echo_canceller.enabled = true;
+	apm_config.echo_canceller.mobile_mode = false;
 
 	if (!stp || !ctx || !prm)
 		return EINVAL;
@@ -94,17 +95,12 @@ int webrtc_aec_alloc(struct aec **stp, void **ctx, struct aufilt_prm *prm)
 	     prm->srate, prm->ch, aec->blocksize);
 
 	aec->inst = AudioProcessingBuilder().Create();
+	if (aec->inst)
+		aec->inst->ApplyConfig(apm_config);
 	if (!aec->inst) {
 		err = ENODEV;
 		goto out;
 	}
-
-	processing.echo_canceller.enabled = true;
-	processing.echo_canceller.mobile_mode = false;
-	processing.gain_controller1.enabled = true;
-	processing.gain_controller1.mode =
-		AudioProcessing::Config::GainController1::kAdaptiveDigital;
-	aec->inst->ApplyConfig(processing);
 
  out:
 	if (err)

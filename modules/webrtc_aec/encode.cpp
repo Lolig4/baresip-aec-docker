@@ -91,9 +91,6 @@ static int encode_float(struct aec_enc *enc, float *sampv, size_t sampc)
 		const float *src = &sampv[i];
 		float *dest = &sampv[i];
 
-		// NOTE: important
-		aec->inst->set_stream_delay_ms(SOUND_CARD_BUF);
-
 		r = aec->inst->ProcessStream(&src, config,
 					     config, &dest);
 		if (r != 0) {
